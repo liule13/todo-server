@@ -24,6 +24,9 @@ public class TodoController {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     public Todo addNewTodo(@RequestBody Todo todo) {
+        if (todo.getText().isEmpty()) {
+            throw new IllegalArgumentException("Todo text cannot be empty");
+        }
         return todoService.addNewTodo(todo);
     }
 }
