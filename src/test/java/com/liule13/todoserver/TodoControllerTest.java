@@ -78,4 +78,18 @@ public class TodoControllerTest {
                 .content(requestBody);
         mockMvc.perform(request).andExpect(status().isUnprocessableEntity());
     }
+
+    //Scenario: Reject missing required field "text"
+    @Test
+    void should_return_422_when_create_with_missing_text() throws Exception {
+        String requestBody = """
+                        {
+                            "done": false
+                        }
+                """;
+        MockHttpServletRequestBuilder request = post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isUnprocessableEntity());
+    }
 }
