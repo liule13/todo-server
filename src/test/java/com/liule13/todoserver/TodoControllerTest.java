@@ -186,4 +186,19 @@ public class TodoControllerTest {
         mockMvc.perform(request).andExpect(status().isUnprocessableEntity());
     }
 
+    @Test
+    void should_return_204_when_delete_todo_with_existed_id() throws Exception {
+        Todo todo = new Todo("123", "existing todo", false);
+        todoRepository.save(todo);
+        MockHttpServletRequestBuilder request = delete("/todos/123")
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request).andExpect(status().isNoContent());
+    }
+
+    @Test
+    void should_return_404_when_delete_todo_with_not_existed_id() throws Exception {
+        MockHttpServletRequestBuilder request = delete("/todos/999")
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request).andExpect(status().isNotFound());
+    }
 }

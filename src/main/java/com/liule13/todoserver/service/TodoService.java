@@ -35,4 +35,12 @@ public class TodoService {
         existingTodo.setDone(todo.getDone());
         return todoRepository.save(existingTodo);
     }
+
+    public void deleteTodo(String id) {
+        Optional<Todo> deleteTodo = todoRepository.findById(id);
+        if (deleteTodo.isEmpty()) {
+            throw new TodoNotFoundException("Todo with id " + id + " not found");
+        }
+        todoRepository.deleteById(id);
+    }
 }
