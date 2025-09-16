@@ -34,6 +34,9 @@ public class TodoController {
     @PutMapping("/{id}")
     @ResponseStatus(code = HttpStatus.OK)
     public Todo updateTodo(@PathVariable String id, @RequestBody Todo todo) {
+        if (todo.getText() == null && todo.getDone() == null) {
+            throw new IllegalArgumentException("Todo text cannot be empty");
+        }
         return todoService.updateTodo(id, todo);
     }
 }

@@ -171,4 +171,19 @@ public class TodoControllerTest {
                 .content(requestBody);
         mockMvc.perform(request).andExpect(status().isNotFound());
     }
+
+    @Test
+    void should_return_422_when_put_todo_with_empty_body() throws Exception {
+        Todo todo = new Todo("123", "existing todo", false);
+        todoRepository.save(todo);
+        String requestBody = """
+                                {
+                                }
+                """;
+        MockHttpServletRequestBuilder request = put("/todos/123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isUnprocessableEntity());
+    }
+
 }
