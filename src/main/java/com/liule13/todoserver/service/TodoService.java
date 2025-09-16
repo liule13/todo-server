@@ -5,6 +5,7 @@ import com.liule13.todoserver.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,5 +23,16 @@ public class TodoService {
     public Todo addNewTodo(Todo todo) {
         todo.setId(UUID.randomUUID().toString());
         return todoRepository.save(todo);
+    }
+
+    public Todo updateTodo(String id, Todo todo) {
+        Optional<Todo> updateTodo = todoRepository.findById(id);
+        if (updateTodo.isEmpty()) {
+            throw new IllegalArgumentException("Todo with id " + todo.getId() + " does not exist");
+        }
+        Todo existingTodo = updateTodo.get();
+        existingTodo.setText(todo.getText());
+        existingTodo.setDone(todo.getDone());
+        return todoRepository.save(existingTodo);
     }
 }

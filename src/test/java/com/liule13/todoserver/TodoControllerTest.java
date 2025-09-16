@@ -12,8 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,4 +113,25 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.done").value(false));
     }
 
+    //Scenario: Update both fields
+    @Test
+    void should_return_updated_todo_when_put_todo_with_existed_id() throws Exception {
+        Todo todo = new Todo("123", "existing todo", false);
+        todoRepository.save(todo);
+        String requestBody = """
+                                {
+                                    "id": "123",
+                                    "text": "updated todo",
+                                    "done": true
+                                }
+                """;
+        MockHttpServletRequestBuilder request = put("/todos/123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").value("123"))
+                .andExpect(jsonPath("$.text").value("updated todo"))
+                .andExpect(jsonPath("$.done").value(true));
+    }
 }
