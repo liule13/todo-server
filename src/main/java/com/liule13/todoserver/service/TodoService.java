@@ -5,6 +5,7 @@ import com.liule13.todoserver.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TodoService {
@@ -19,6 +20,7 @@ public class TodoService {
     }
 
     public Todo addNewTodo(Todo todo) {
+        todo.setId(UUID.randomUUID().toString());
         return todoRepository.save(todo);
     }
 }

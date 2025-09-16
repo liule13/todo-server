@@ -2,6 +2,7 @@ package com.liule13.todoserver;
 
 import com.liule13.todoserver.entity.Todo;
 import com.liule13.todoserver.repository.TodoRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,5 +92,25 @@ public class TodoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody);
         mockMvc.perform(request).andExpect(status().isUnprocessableEntity());
+    }
+
+    //Scenario: Ignore client-sent id
+    @Test
+    void should_ignore_client_sent_id_when_create_new_todo() throws Exception {
+        String requestBody = """
+                        {
+                            "id": "client-sent-id",
+                            "text": "first todo",
+                            "done": false
+                        }
+                """;
+        MockHttpServletRequestBuilder request = post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").value(Matchers.not("client-sent-id")))
+                .andExpect(jsonPath("$.text").value("first todo"))
+                .andExpect(jsonPath("$.done").value(false));
     }
 }
