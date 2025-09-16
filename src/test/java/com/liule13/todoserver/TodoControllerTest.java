@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,8 +43,25 @@ public class TodoControllerTest {
         MockHttpServletRequestBuilder request = get("/todos").contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(request).andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
-//                .andExpect(jsonPath("$[0].id").value("1"))
+                .andExpect(jsonPath("$[0].id").exists())
                 .andExpect(jsonPath("$[0].text").value("first todo"))
                 .andExpect(jsonPath("$[0].done").value(false));
+    }
+
+    @Test
+    void should_return_a_todo_when_create_new_todo() throws Exception {
+        String requestBody = """
+                        {
+                            "text": "first todo",
+                            "done": false
+                        }
+                """;
+        MockHttpServletRequestBuilder request = post("/todos")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.text").value("first todo"))
+                .andExpect(jsonPath("$.done").value(false));
     }
 }

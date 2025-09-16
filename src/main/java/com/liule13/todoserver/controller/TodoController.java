@@ -2,9 +2,8 @@ package com.liule13.todoserver.controller;
 
 import com.liule13.todoserver.entity.Todo;
 import com.liule13.todoserver.service.TodoService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +19,11 @@ public class TodoController {
     @GetMapping
     public List<Todo> index() {
         return todoService.index();
+    }
+
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Todo addNewTodo(@RequestBody Todo todo) {
+        return todoService.addNewTodo(todo);
     }
 }
