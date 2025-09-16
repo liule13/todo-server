@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -200,5 +199,17 @@ public class TodoControllerTest {
         MockHttpServletRequestBuilder request = delete("/todos/999")
                 .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(request).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_allow_cors() throws Exception {
+        MockHttpServletRequestBuilder request = options("/todos")
+                .header("Origin", "http://localhost:3000")
+                .header("Access-Control-Request-Method", "GET", "POST", "PUT", "DELETE")
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(jsonPath("$").doesNotExist())
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"))
+                .andExpect(header().string("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS"));
     }
 }
