@@ -1,6 +1,7 @@
 package com.liule13.todoserver.service;
 
 import com.liule13.todoserver.entity.Todo;
+import com.liule13.todoserver.exception.TodoNotFoundException;
 import com.liule13.todoserver.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class TodoService {
     public Todo updateTodo(String id, Todo todo) {
         Optional<Todo> updateTodo = todoRepository.findById(id);
         if (updateTodo.isEmpty()) {
-            throw new IllegalArgumentException("Todo with id " + todo.getId() + " does not exist");
+            throw new TodoNotFoundException("Todo with id " + id + " not found");
         }
         Todo existingTodo = updateTodo.get();
         existingTodo.setText(todo.getText());
