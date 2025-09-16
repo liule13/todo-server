@@ -134,4 +134,27 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.text").value("updated todo"))
                 .andExpect(jsonPath("$.done").value(true));
     }
+
+    @Test
+    void should_ignore_surplus_id_in_body_when_put_todo() throws Exception {
+        Todo todo1 = new Todo("123", "existing todo 1", false);
+        Todo todo2 = new Todo("456", "existing todo 2", false);
+        todoRepository.save(todo1);
+        todoRepository.save(todo2);
+        String requestBody = """
+                                {
+                                    "id": "456",
+                                    "text": "updated todo",
+                                    "done": true
+                                }
+                """;
+        MockHttpServletRequestBuilder request = put("/todos/123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody);
+        mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.id").value("123"))
+                .andExpect(jsonPath("$.text").value("updated todo"))
+                .andExpect(jsonPath("$.done").value(true));
+    }
 }
